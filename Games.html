@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cool Kids</title>
+
+  <!-- external styling sheet -->
+  <link href="Cool.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bgMusic" src="wind-up-tone-effect-240240.mp3" autoplay loop></audio>
+  <button id="muteButton" onclick="toggleMusic()">🔊</button>
+  <!-- Navigation -->
+  <header>
+    <nav class="navigation">
+      <div class="logo">🌟 Cool Kids</div>
+      <ul>
+        <li><a href="Home.html">🏠 Home</a></li>
+        <li><a href="Games.html">🎮 Games</a></li>
+        <li><a href="Leaderboard.html">🏆 Leaderboard</a></li>
+        <li><a href="Account.html">👦 Account</a></li>
+        <li><a href="About Us.html">ℹ️ About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="banner">
+    <img src="game.png" alt="Left Banner" />
+    <h1>🎉 Play & Learn</h1>
+    <img src="game.png" alt="Right Banner" />
+  </div>
+    <div class="game-container">
+      <div class="game-card" onclick="location.href='trivia.html'">
+        <h3>🎯 Trivia Time</h3>
+        <img src="brain.png" alt="Brain Icon">
+        <div class="game-category">
+          <p>Fun facts and questions from space to sports!</p>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="location.href='memory.html'">
+        <h3>🧠 Match the Pairs!</h3>
+        <img src="apple.png" alt="Apple Icon">
+        <div class="game-category">
+          <p>Find the matching cards and sharpen your memory!</p>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="location.href='quiz.html'">
+        <h3>📚 Quiz Time</h3>
+        <img src="quiz2.png" alt="Quiz Icon">
+        <div class="game-category">
+          <p>Quick questions to challenge your brainpower!</p>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="location.href='Maths.html'">
+        <h3>➗ Magic Math</h3>
+        <img src="math.png" alt="Math Icon">
+        <div class="game-category">
+          <p>Add, subtract and multiply in a fun way!</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="game-types">
+      <div class="banner">
+        <h2>🧩 More Fun Games!</h2>
+      </div>
+      <div class="game-category-container">
+        <div class="game-card" onclick="location.href='riddles.html'">
+          <h3> Riddles</h3>
+          <img src="riddle.png" alt="Riddle Icon">
+          <div class="game-category">
+            <p>Use your detective skills to solve clever puzzles!</p>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="location.href='scramble.html'">
+          <h3>🔤 Word Scramble</h3>
+          <img src="scramble.png" alt="Scramble Icon">
+          <div class="game-category">
+            <p>Unscramble the letters and test your vocabulary!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Cool Kids. Made for learning and fun!
+  </footer>
+
+  <script>
+    function toggleMusic() {
+      const music = document.getElementById("bgMusic");
+      music.muted = !music.muted;
+      document.getElementById("muteButton").textContent = music.muted ? "🔇" : "🔊";
+    }
+  </script>
+</body>
+</html>

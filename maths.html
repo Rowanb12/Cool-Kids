@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cool Kids | Math Game</title>
+
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(135deg, #4a00e0); /* Cool purple  */
+      text-align: center;
+      padding: 20px;
+      color: #f5f5f5;
+    }
+
+    /* Header Navigation Styles */
+    .navigation {
+      background-color: #300b63; /* Dark purple for nav */
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-radius: 10px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    .navigation ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+    }
+
+    .navigation ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .navigation ul li a:hover {
+      color: #ffea00; /* Yellow hover effect */
+    }
+
+    h1 {
+      margin: 30px 0 20px;
+      font-size: 2.5rem;
+      color: #ffea00; /* Bright yellow text */
+    }
+
+    #question {
+      font-size: 1.8rem;
+      margin: 20px 0;
+      color: #f5f5f5;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    input[type="number"] {
+      font-size: 1.5rem;
+      padding: 10px;
+      width: 120px;
+      border: 2px solid #d5d6c7; /* Yellow border */
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 1rem;
+      background-color: #73eaa7; /* Bright yellow button */
+      color: #343636; /* Purple text for button */
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    button:hover {
+      background-color: #595851; /* Lighter yellow when hovered */
+      color: #fff; /* White text on hover */
+    }
+
+    #feedback {
+      margin-top: 20px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffea00; /* Yellow feedback */
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 1.6rem;
+      color: #ffffff;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      input[type="number"] {
+        width: 80px;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+
+<!--  Navigation Header -->
+<header>
+  <nav class="navigation">
+    <div class="logo">Cool Kids</div>
+    <ul>
+      <li><a href="Home.html">Home</a></li>
+      <li><a href="Games.html">Games</a></li>
+      <li><a href="Leaderboard.html">Leaderboard</a></li>
+      <li><a href="Account.html">Account</a></li>
+      <li><a href="About Us.html">About Us</a></li>
+    </ul>
+  </nav>
+</header>
+
+<body>
+
+  <!--  Main Game Interface -->
+  <h1>Math Challenge Time!</h1>
+  <div id="question">Loading...</div>
+
+  <input type="number" id="answer" placeholder="Your answer">
+  <br>
+  <button id="submitBtn">Submit</button>
+
+  <!--Feedback -->
+  <div id="feedback"></div>
+  <div id="score">Score: 0</div>
+
+  <!-- Submit Score Button -->
+  <button onclick="submitScore()">Submit Score</button>
+
+  <!--JavaScript Game Logic -->
+  <script>
+    let currentQuestion = {};
+    let score = 0;
+    let questionCount = 0;
+
+    //  Generate random math question
+    function fetchMathQuestion() {
+      return new Promise((resolve) => {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const operations = ['+', '-', '*'];
+        const operator = operations[Math.floor(Math.random() * operations.length)];
+        const question = `${num1} ${operator} ${num2}`;
+        const answer = eval(question);
+
+        currentQuestion = {
+          questionText: question,
+          correctAnswer: answer
+        };
+
+        resolve(currentQuestion);
+      });
+    }
+
+    // Display current question on screen
+    function displayQuestion() {
+      fetchMathQuestion().then((q) => {
+        document.getElementById('question').textContent = `What is ${q.questionText}?`;
+        document.getElementById('answer').value = '';
+        document.getElementById('feedback').textContent = '';
+      });
+    }
+
+    // Handle user answer
+    function handleSubmitAnswer() {
+      const userAnswer = Number(document.getElementById('answer').value);
+      if (userAnswer === currentQuestion.correctAnswer) {
+        document.getElementById('feedback').textContent = 'Correct!';
+        score++;
+      } else {
+        document.getElementById('feedback').textContent = `Try again! Correct answer was ${currentQuestion.correctAnswer}`;
+      }
+
+      document.getElementById('score').textContent = `Score: ${score}`;
+      questionCount++;
+
+      if (questionCount < 5) {
+        setTimeout(displayQuestion, 1500); // Delay before next question
+      } else {
+        document.getElementById('submitBtn').disabled = true;
+        alert(" Game Over! Click 'Submit Score' to save your score.");
+      }
+    }
+
+    // Submit score to local storage
+    function submitScore() {
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert(' You must be logged in to submit a score!');
+        return;
+      }
+
+      if (questionCount < 5) {
+        alert('Finish all questions before submitting your score!');
+        return;
+      }
+
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+      const existing = scores.find(s => s.name === user);
+
+      if (existing) {
+        existing.score = Math.max(existing.score, score); // Keep highest score
+      } else {
+        scores.push({ name: user, score });
+      }
+
+      localStorage.setItem('scores', JSON.stringify(scores));
+      alert(` Score submitted: ${score}`);
+    }
+
+    // Start the game on load
+    document.getElementById('submitBtn').addEventListener('click', handleSubmitAnswer);
+    displayQuestion();
+  </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trivia Game</title>
+
+  <!-- Internal Styles -->
+  <style>
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #042444, #01333c); 
+      color: #2B2D42;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1, h2 {
+      font-family: 'Fredoka', sans-serif;
+      color: #2B2D42;
+    }
+
+    /*  Header & Navigation */
+    header {
+      background: #4D79FF;
+      padding: 20px;
+      border-bottom: 4px solid #03203f;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #062357;
+      padding: 12px 30px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .navigation ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .navigation ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .navigation ul li a:hover {
+      color: #FFC107;
+    }
+
+    /*Trivia Question Box */
+    .trivia-box {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      font-size: 1.2rem;
+    }
+
+    /* Answer Buttons */
+    .answers button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #F4A300;
+      color: #fff;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .answers button:hover {
+      background-color: #FF8C00;
+    }
+
+    .correct {
+      background-color: #28A745 !important;
+    }
+
+    .wrong {
+      background-color: #DC3545 !important;
+    }
+
+    /*Submit Button */
+    #submitBtn {
+      margin: 20px auto;
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #FF6F61;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: block;
+    }
+
+    #submitBtn:disabled {
+      background-color: #D3D3D3;
+      cursor: not-allowed;
+    }
+
+    #submitBtn:hover:enabled {
+      background-color: #FF8C66;
+    }
+
+    /*Animation for Questions*/
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #question {
+      animation: fadeIn 1s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+  <!--Header-->
+  <header>
+    <h1>Trivia Game</h1>
+    <nav class="navigation">
+      <div class="logo">Cool Kids</div>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="Games.html">Games</a></li>
+        <li><a href="Leaderboard.html">Leaderboard</a></li>
+        <li><a href="Account.html">Account</a></li>
+        <li><a href="About Us.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- === Main Trivia Section === -->
+  <main>
+    <div class="trivia-box" id="trivia">
+      <h2 id="question">Loading...</h2>
+      <div class="answers" id="answers"></div>
+      <button onclick="loadQuestion()">Next Question</button>
+    </div>
+
+    <!-- Submit Score Button -->
+    <button id="submitBtn" onclick="submitScore()">Submit Score</button>
+  </main>
+
+  <!-- === Script Section === -->
+  <script>
+    let hasAnswered = false;
+    let scoreSubmitted = false;
+
+    // Sound Effects
+    const correctSound = new Audio('generic-censor-tone-104518.mp3');
+    const wrongSound = new Audio('short-beep-tone-47916.mp3');
+    const clickSound = new Audio('wind-up-tone-effect-240240.mp3');
+
+    // Load a trivia question from Open Trivia DB API
+    async function loadQuestion() {
+      clickSound.play(); // Play click sound
+
+      // Reset UI state
+      const questionEl = document.getElementById("question");
+      const answersEl = document.getElementById("answers");
+      questionEl.textContent = "Loading...";
+      answersEl.innerHTML = "";
+      hasAnswered = false;
+
+      // Fetch question
+      const res = await fetch("https://opentdb.com/api.php?amount=1");//open api link
+      const data = await res.json();
+      const question = data.results[0];
+
+      // Decode question and answers to avoid HTML entities
+      const parser = new DOMParser();
+      const decodedQ = parser.parseFromString(question.question, "text/html").body.textContent;
+      const correct = parser.parseFromString(question.correct_answer, "text/html").body.textContent;
+      const incorrect = question.incorrect_answers.map(ans =>
+        parser.parseFromString(ans, "text/html").body.textContent
+      );
+
+      // Set question text
+      questionEl.textContent = decodedQ;
+
+      // Shuffle answers
+      const allAnswers = [...incorrect, correct].sort(() => Math.random() - 0.5);
+
+      // Display answer buttons
+      allAnswers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.textContent = answer;
+
+        btn.onclick = () => {
+          if (hasAnswered) return;
+
+          // Check if selected answer is correct
+          if (answer === correct) {
+            btn.classList.add("correct");
+            correctSound.play();
+            alert("YAAY!!");
+          } else {
+            btn.classList.add("wrong");
+            wrongSound.play();
+            alert(`The correct answer was: ${correct}`);
+          }
+
+          // Disable all buttons after answering
+          document.querySelectorAll(".answers button").forEach(b => b.disabled = true);
+          hasAnswered = true;
+        };
+
+        answersEl.appendChild(btn);
+      });
+
+      // Reset submit state
+      scoreSubmitted = false;
+      document.getElementById("submitBtn").disabled = false;
+    }
+
+    // Submit score to localStorage
+    function submitScore() {
+      clickSound.play();
+
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert('You must be logged in to submit a score!');
+        return;
+      }
+
+      if (!hasAnswered) {
+        alert('Answer a question first!');
+        return;
+      }
+
+      if (scoreSubmitted) {
+        alert('Score already submitted for this round!');
+        return;
+      }
+
+      // Generate a random score and store it
+      const score = Math.floor(Math.random() * 100);
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+
+      const existing = scores.find(s => s.name === user);
+      if (existing) {
+        existing.score = Math.max(existing.score, score); // Update if higher
+      } else {
+        scores.push({ name: user, score });
+      }
+
+      localStorage.setItem('scores', JSON.stringify(scores));
+      alert(`Score submitted: ${score}`);
+
+      scoreSubmitted = true;
+      document.getElementById("submitBtn").disabled = true;
+    }
+
+    // Load the first question on page load
+    window.onload = loadQuestion;
+  </script>
+</body>
+</html>

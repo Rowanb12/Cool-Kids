@@ -1,0 +1,271 @@
+/* body */
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(to bottom, #fceabb, #f8b500);
+  overflow-x: hidden;
+  color: #333;
+}
+
+/* Logo*/
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/*  Navigation */
+.navigation {
+  background-color: #ff6f61;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+.navigation .logo {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.navigation ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 25px;
+  background-color: #f78da7;
+  transition: all 0.3s ease;
+}
+
+.navigation ul li a:hover {
+  background-color: #f06292;
+}
+
+/* Banners */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.banner2 img {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+
+.banner h1 {
+  font-size: 3rem;
+  margin: 20px 0 10px;
+  color: #d32f2f;
+  animation: pop 1s ease-out;
+}
+
+/* Pop Animation for Headers */
+@keyframes pop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+/* Hero Section */
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.icon-large {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.hero-image {
+  max-width: 300px;
+  height: auto;
+  border-radius: 20px;
+}
+
+/* Start Button */
+.start-button {
+  background-color: #ff4081;
+  color: white;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.start-button:hover {
+  background-color: #d81b60;
+}
+
+/* Main Content*/
+main {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.game-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+.game-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.game-card h3 {
+  font-size: 1.6rem;
+  color: #f57c00;
+}
+
+.game-card img {
+  width: 60px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Game Types / Categories */
+.game-types {
+  background-color: #fff3e0;
+  padding: 40px 20px;
+  border-radius: 20px;
+  margin-top: 40px;
+}
+
+.game-types h2 {
+  font-size: 2rem;
+  color: #e65100;
+}
+
+.game-category-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.game-category {
+  flex: 1 1 250px;
+  background-color: #ffecb3;
+  padding: 20px;
+  border-radius: 15px;
+  transition: background 0.3s ease;
+}
+
+.game-category:hover {
+  background-color: #ffe082;
+}
+
+.game-category p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Login Section */
+.login-section {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f885ab;
+}
+
+.login-form {
+  background-color: rgb(252, 180, 180);
+  padding: 30px;
+  max-width: 400px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-form input,
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.login-form button {
+  background-color: #ec407a;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #d81b60;
+}
+
+#logoutBtn {
+  background-color: #ef5350;
+  display: none;
+}
+
+#logoutBtn:hover {
+  background-color: #d32f2f;
+}
+
+/*Mute Button*/
+#muteButton {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Background Video Styling */
+.background-video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+  opacity: 0.08;
+}
+
+/*Footer*/
+footer, .main-footer {
+  background-color: #ff4081;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-weight: bold;
+  margin-top: 50px;
+}

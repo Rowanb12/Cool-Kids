@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finish the Sentence Game</title>
+
+  <style>
+    /* Base styling for the whole page */
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    /* Header styling */
+    header.main-header {
+      background: #26a69a;
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+      font-size: 2.2rem;
+      font-weight: bold;
+    }
+
+    /* Navigation menu */
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    nav li {
+      margin: 0 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffd600;
+    }
+
+    /* Main content area */
+    main {
+      padding: 30px;
+    }
+
+    /* Box that contains the question and input */
+    #question-container {
+      background-color: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 30px;
+      display: inline-block;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    /* Sentence text */
+    #sentence {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #34495e;
+      margin-bottom: 20px;
+    }
+
+    /* Input styling */
+    input[type="text"] {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1.2rem;
+      border: 2px solid #26a69a;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Focus style for input */
+    input[type="text"]:focus {
+      border-color: #00796b;
+      outline: none;
+    }
+
+    /* Buttons (Submit & Score) */
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #26a69a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #00796b;
+      transform: scale(1.05);
+    }
+
+    /* Feedback after submitting answer */
+    .result {
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin-top: 20px;
+    }
+
+    /* Turn counter */
+    .turns {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      color: #2d3436;
+    }
+
+    /* Submit Score button styling */
+    #submit-score {
+      margin-top: 25px;
+      padding: 14px 28px;
+      font-size: 18px;
+      background-color: #ffeb3b;
+      color: #333;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: none; /* Hidden until all questions are done */
+    }
+
+    #submit-score:hover {
+      background-color: #fdd835;
+    }
+
+    /* Quiz image styling */
+    img {
+      max-width: 150px;
+      margin-top: 10px;
+    }
+
+    /* Simple fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header section -->
+  <header class="main-header">
+    <div class="logo">Cool Kids</div>
+    <nav>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="Games.html">Games</a></li>
+        <li><a href="Leaderboard.html">Leaderboard</a></li>
+        <li><a href="Account.html">Account</a></li>
+        <li><a href="About Us.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Audio for feedback -->
+  <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
+
+  <!-- Main game area -->
+  <main>
+    <img src="quiz.png" alt="Quiz" />
+    <h1>🎉 Finish the Sentence Game 🎉</h1>
+
+    <!-- Question and input area -->
+    <div id="question-container">
+      <p>🧠 Complete the sentence:</p>
+      <p id="sentence"></p>
+      <input type="text" id="answer" placeholder="Type your answer here..." />
+      <br />
+      <button onclick="checkAnswer()">Submit Answer</button>
+    </div>
+
+    <!-- Feedback and turn display -->
+    <div class="result" id="result"></div>
+    <div class="turns" id="turns">Turns: 0</div>
+
+    <!-- Submit score button -->
+    <button id="submit-score" onclick="submitScore()">🏆 Submit Your Score!</button>
+  </main>
+
+  <!-- Game Logic Script -->
+  <script>
+    // Predefined list of sentence prompts and correct answers
+    const sentences = [
+      { sentence: "The quick brown fox jumped over the ___", answer: "lazy dog" },
+      { sentence: "The cat sat on the ___", answer: "mat" },
+      { sentence: "She loves to ___ in the morning", answer: "dance" },
+      { sentence: "My favorite color is ___", answer: "blue" },
+      { sentence: "He went to the store to buy some ___", answer: "milk" }
+    ];
+
+    let currentQuestionIndex = 0; // Tracks which question we're on
+    let turns = 0; // Tracks number of turns taken
+
+    // Display the current sentence prompt
+    function loadQuestion() {
+      const question = sentences[currentQuestionIndex];
+      document.getElementById('sentence').innerText = question.sentence;
+      document.getElementById('answer').value = "";
+      document.getElementById('result').innerText = "";
+    }
+
+    // Check if the user's input matches the correct answer
+    function checkAnswer() {
+      const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+      const correctAnswer = sentences[currentQuestionIndex].answer.toLowerCase();
+      const resultElement = document.getElementById('result');
+
+      // Warn if input is empty
+      if (!userAnswer) {
+        resultElement.innerText = "⛔ Please enter an answer!";
+        resultElement.style.color = "#e67e22";
+        return;
+      }
+
+      // Match answer and provide feedback
+      if (userAnswer === correctAnswer) {
+        playCorrectSound();
+        resultElement.innerText = "✅ Correct! Great job!";
+        resultElement.style.color = "#2ecc71";
+      } else {
+        playWrongSound();
+        resultElement.innerText = `❌ The correct answer was: "${sentences[currentQuestionIndex].answer}"`;
+        resultElement.style.color = "#e74c3c";
+      }
+
+      // Update turns and advance question
+      turns++;
+      document.getElementById('turns').innerText = `Turns: ${turns}`;
+      currentQuestionIndex++;
+
+      // Show submit button if game is done
+      if (currentQuestionIndex === sentences.length) {
+        document.getElementById('submit-score').style.display = 'inline-block';
+      } else {
+        setTimeout(loadQuestion, 2000); // Wait before loading next
+      }
+    }
+
+    // Handle score submission
+    function submitScore() {
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert("🔒 Please log in to submit your score!");
+        return;
+      }
+
+      // Temporary random score generation
+      const score = Math.floor(Math.random() * 100);
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+      const existing = scores.find(s => s.name === user);
+
+      if (existing) {
+        existing.score = Math.max(existing.score, score); // Keep highest
+      } else {
+        scores.push({ name: user, score });
+      }
+
+      localStorage.setItem('scores', JSON.stringify(scores));
+      alert("🎯 Score submitted: " + score);
+      document.getElementById('submit-score').style.display = 'none';
+    }
+
+    // Play correct answer sound
+    function playCorrectSound() {
+      document.getElementById('correctSound').play();
+    }
+
+    // Play wrong answer sound
+    function playWrongSound() {
+      document.getElementById('wrongSound').play();
+    }
+
+    // Load first question on page load
+    window.onload = loadQuestion;
+  </script>
+</body>
+</html>

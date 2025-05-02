@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard</title>
+
+  <!-- Responsive viewport settings -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font for playful vibes -->
+  <link href="Cool.css" rel="stylesheet">
+
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    /* Leaderboard section */
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin: 40px 0 20px;
+      color: #00796b;
+    }
+
+    .leaderboard-container {
+      background-color: white;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease;
+    }
+
+    /* Table styles */
+    .leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .leaderboard th, .leaderboard td {
+      padding: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .leaderboard th {
+      background-color: #00bcd4;
+      color: white;
+    }
+
+    .leaderboard tr:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+
+    .leaderboard tr:hover {
+      background-color: #d0f0f0;
+      transition: 0.3s ease;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+ <!-- Navigation -->
+ <header>
+  <nav class="navigation">
+    <div class="logo">🌟 Cool Kids</div>
+    <ul>
+      <li><a href="Home.html">🏠 Home</a></li>
+      <li><a href="Games.html">🎮 Games</a></li>
+      <li><a href="Leaderboard.html">🏆 Leaderboard</a></li>
+      <li><a href="Account.html">👦 Account</a></li>
+      <li><a href="About Us.html">ℹ️ About</a></li>
+    </ul>
+  </nav>
+</header>
+
+  <!-- Leaderboard title -->
+  <h2>Leaderboard
+  <img src= "trophy.png" width="10%"alt="quiz image"> </h2><!--https://www.flaticon.com/free-icon/trophy-star_11167978?term=trophy&page=
+  1&position=11&origin=search&related_id=11167978
+  -->
+  <!-- Leaderboard container -->
+  <div class="leaderboard-container">
+    <h2>Top Players</h2>
+
+    <!-- Leaderboard table -->
+    <table class="leaderboard">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+        <!--Rows will be inserted dynamically using JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- JavaScript to populate leaderboard from localStorage -->
+  <script>
+    window.onload = () => {
+      const leaderboardBody = document.getElementById("leaderboard-body");
+
+      // Get scores from localStorage or empty array if not found
+      const scores = JSON.parse(localStorage.getItem("scores")) || [];
+
+      // Sort scores in descending order
+      const sortedScores = scores.sort((a, b) => b.score - a.score);
+
+      // Create and insert rows into the table
+      sortedScores.forEach((player, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${player.name}</td>
+          <td>${player.score}</td>
+        `;
+        leaderboardBody.appendChild(row);
+      });
+    };
+  </script>
+
+</body>
+</html>

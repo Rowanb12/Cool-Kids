@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Game</title>
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #64b0f7);
+      margin: 0;
+      padding: 0;
+      color: #333; 
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #ffffff; 
+      margin-top: 40px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+    }
+
+    /* Navigation Header */
+    header {
+      background-color: rgba(0, 0, 0, 0.7); /* Transparent dark header */
+      padding: 20px 0;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .navigation ul {
+      list-style-type: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .navigation ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2rem;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .navigation ul li a:hover {
+      color: #ffeb3b; /* Bright yellow for hover effect */
+    }
+
+    /* Game Board Styling */
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+      justify-content: center;
+      margin-top: 40px;
+      padding: 20px;
+    }
+
+    /* Card Styling */
+    .card {
+      width: 100px;
+      height: 100px;
+      background: #dbe3ea; /* Light grey with a hint of blue */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: #2c3e50; /* Dark grey for card text */
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease; /* transitions */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for cards */
+    }
+
+    .card.flipped {
+      background: #ffffff; /* White background when flipped */
+      color: #3498db; /* Blue text on flipped card */
+      transform: scale(1.1); /* Slight zoom effect on flipped card */
+    }
+
+    .card:hover {
+      transform: scale(1.1); /* Slight zoom effect on hover */
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Bigger shadow on hover */
+    }
+
+    /* Controls and Buttons Styling */
+    .controls {
+      margin-top: 40px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #3498db; /* Blue button */
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background: #2980b9; /* Darker blue on hover */
+    }
+
+    /* Turns Count Styling */
+    p {
+      font-size: 1.4rem;
+      color: #ffffff; /* White text for turn count */
+      margin-top: 10px;
+    }
+
+    /* Submit Button Styling */
+    #submitBtn {
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #ffeb3b; /* Bright yellow submit button */
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #submitBtn:disabled {
+      background-color: #cfd8dc; /* Disabled state color */
+    }
+
+    #submitBtn:hover {
+      background-color: #fbc02d; /* Slightly darker yellow on hover */
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navigation">
+      <div class="logo">Cool Kids</div>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="Games.html">Games</a></li>
+        <li><a href="Leaderboard.html">Leaderboard</a></li>
+        <li><a href="Account.html">Account</a></li>
+        <li><a href="About Us.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1>Memory Game</h1>
+
+  <!-- Game Board -->
+  <div id="game-board"></div>
+
+  <!-- Controls Section -->
+  <div class="controls">
+    <button onclick="resetGame()">New Game</button>
+    <p id="turns">Turns: 0</p>
+  </div>
+
+  <!-- Submit Score Button -->
+  <button id="submitBtn" onclick="submitScore()">Submit Score</button>
+
+  <script>
+    const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    let cards = [];
+    let flippedCards = [];
+    let matchedCards = [];
+    let turns = 0;
+
+    // Function to generate and shuffle cards
+    function generateCards() {
+      cards = [...cardValues, ...cardValues];  // Duplicate the values
+      cards = shuffle(cards);  // Shuffle the cards
+    }
+
+    // Function to shuffle an array
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    // Function to start a new game
+    function startGame() {
+      generateCards();
+      flippedCards = [];
+      matchedCards = [];
+      turns = 0;
+      document.getElementById('turns').textContent = `Turns: ${turns}`;
+      renderGameBoard();
+    }
+
+    // Function to render the game board
+    function renderGameBoard() {
+      const gameBoard = document.getElementById('game-board');
+      gameBoard.innerHTML = ''; // Clear the board
+
+      cards.forEach((cardValue, index) => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.dataset.index = index;
+        card.textContent = ''; // Initially empty
+        card.onclick = () => flipCard(card);
+        gameBoard.appendChild(card);
+      });
+    }
+
+    // Function to flip a card
+    function flipCard(cardElement) {
+      const cardIndex = cardElement.dataset.index;
+      if (flippedCards.length === 2 || matchedCards.includes(cardIndex)) {
+        return; // Ignore if two cards are already flipped 
+      }
+
+      cardElement.textContent = cards[cardIndex];
+      cardElement.classList.add('flipped');
+      flippedCards.push(cardIndex);
+
+      // If two cards are flipped, check for a match
+      if (flippedCards.length === 2) {
+        turns++;  // Increment turn only after both cards are flipped
+        document.getElementById('turns').textContent = `Turns: ${turns}`;
+        checkMatch();
+      }
+    }
+
+    // Function to check if the flipped cards match
+    function checkMatch() {
+      const [firstCardIndex, secondCardIndex] = flippedCards;
+      const firstCardValue = cards[firstCardIndex];
+      const secondCardValue = cards[secondCardIndex];
+
+      if (firstCardValue === secondCardValue) {
+        matchedCards.push(firstCardIndex, secondCardIndex);  // Mark matched cards
+      } else {
+        // If not matched, flip the cards back after a brief delay
+        setTimeout(() => {
+          const firstCard = document.querySelector(`[data-index="${firstCardIndex}"]`);
+          const secondCard = document.querySelector(`[data-index="${secondCardIndex}"]`);
+          firstCard.textContent = '';
+          secondCard.textContent = '';
+          firstCard.classList.remove('flipped');
+          secondCard.classList.remove('flipped');
+        }, 1000);
+      }
+
+      flippedCards = [];  // Reset flipped cards
+    }
+
+    // Function to reset the game
+    function resetGame() {
+      startGame();
+    }
+
+    // Function to submit score
+    function submitScore() {
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert('You must be logged in to submit a score!');
+        return;
+      }
+  
+      // Check if the game is complete (i.e., all cards are matched)
+      if (matchedCards.length !== cards.length) {
+        alert('Please complete the game before submitting your score!');
+        return;
+      }
+  
+      const score = Math.floor(Math.random() * 100); // Random score for demo
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+  
+      const existing = scores.find(s => s.name === user);
+      if (existing) {
+        existing.score = Math.max(existing.score, score); // Keep best score
+      } else {
+        scores.push({ name: user, score });
+      }
+  
+      localStorage.setItem('scores', JSON.stringify(scores));
+      alert('Score submitted: ' + score);
+    }
+
+    // Initialize the game
+    startGame();
+  </script>
+</body>
+</html>

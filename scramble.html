@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Scramble Game</title>
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #6b7dff, #89c2f9); 
+      margin: 0;
+      padding: 0;
+      color: #333; /* Dark grey text for readability */
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #ffffff; /* White text for title */
+      margin-top: 40px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Soft shadow for the title */
+    }
+
+    /* Navigation Header */
+    header {
+      background-color: rgba(0, 0, 0, 0.7); /* Transparent dark header */
+      padding: 20px 0;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .navigation ul {
+      list-style-type: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .navigation ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2rem;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .navigation ul li a:hover {
+      color: #ffeb3b; /* Bright yellow for hover effect */
+    }
+
+    /* Game Board Styling */
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+      justify-content: center;
+      margin-top: 40px;
+      padding: 20px;
+    }
+
+    /* Card Styling */
+    .card {
+      width: 100px;
+      height: 100px;
+      background: #dbe3ea; /* Light grey with a hint of blue */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: #2c3e50; /* Dark grey for card text */
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease; /* Smooth transitions */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for cards */
+    }
+
+    .card.flipped {
+      background: #ffffff; /* White background when flipped */
+      color: #3498db; /* Blue text on flipped card */
+      transform: scale(1.1); /* Slight zoom effect on flipped card */
+    }
+
+    .card:hover {
+      transform: scale(1.1); /* Slight zoom effect on hover */
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    /* Controls and Buttons Styling */
+    .controls {
+      margin-top: 40px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #3498db; 
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background: #2980b9; 
+    }
+
+    p {
+      font-size: 1.4rem;
+      color: #ffffff; 
+      margin-top: 10px;
+    }
+
+    /* Submit Button Styling */
+    #submitBtn {
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #ffeb3b; 
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #submitBtn:disabled {
+      background-color: #cfd8dc; /* Disabled state color */
+    }
+
+    #submitBtn:hover {
+      background-color: #fbc02d; /* Slightly darker yellow on hover */
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navigation">
+      <div class="logo">Cool Kids</div>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="Games.html">Games</a></li>
+        <li><a href="Leaderboard.html">Leaderboard</a></li>
+        <li><a href="Account.html">Account</a></li>
+        <li><a href="About Us.html">About Us</a></li>
+      </ul>
+    </nav>
+  </header>
+<body>
+
+  <div class="game-container">
+    <h1>Scrambled Words </h1>
+    <div id="scrambled-word">Loading word...</div>
+    <input type="text" id="guess" placeholder="Your guess here" />
+    <br>
+    <button onclick="checkGuess()">Submit</button>
+    <button onclick="submitScore()">Submit Score</button>
+    <div id="feedback"></div>
+    <div id="score">Score: 0</div>
+    <div id="questionNumber">Question: 1 / 5</div>
+  </div>
+
+  <script>
+    let originalWord = '';
+    let score = 0;
+    let questionCount = 0;
+    const maxQuestions = 5;
+
+    // Scrambles the word
+    function scrambleWord(word) {
+      return word.split('').sort(() => Math.random() - 0.5).join('');
+    }
+
+    // Fetch a new word and scramble it
+    async function fetchWord() {
+      if (questionCount >= maxQuestions) {
+        document.getElementById('scrambled-word').textContent = "🎉 Game over! Click 'Submit Score'.";
+        document.getElementById('guess').style.display = 'none';
+        return;
+      }
+
+      try {
+        const res = await fetch('https://random-word-api.herokuapp.com/word?number=1');// open api link
+        const data = await res.json();
+        originalWord = data[0];
+        const scrambled = scrambleWord(originalWord);
+
+        document.getElementById('scrambled-word').textContent = `Scrambled Word: ${scrambled}`;
+        document.getElementById('guess').value = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('guess').style.display = 'inline';
+      } catch (err) {
+        document.getElementById('scrambled-word').textContent = '❌ Failed to load word.';
+        console.error('Error fetching word:', err);
+      }
+    }
+
+    // Check the user's guess
+    function checkGuess() {
+      const guess = document.getElementById('guess').value.trim().toLowerCase();
+      if (!guess) {
+        document.getElementById('feedback').textContent = 'Please enter a guess.';
+        return;
+      }
+
+      questionCount++;
+      document.getElementById('questionNumber').textContent = `Question: ${Math.min(questionCount + 1, maxQuestions)} / ${maxQuestions}`;
+
+      if (guess === originalWord.toLowerCase()) {
+        score++;
+        document.getElementById('feedback').textContent = 'Correct!';
+      } else {
+        document.getElementById('feedback').textContent = ` Incorrect! The word was: ${originalWord}`;
+      }
+
+      document.getElementById('score').textContent = `Score: ${score}`;
+
+      if (questionCount < maxQuestions) {
+        fetchWord();
+      } else {
+        document.getElementById('scrambled-word').textContent = "🎉 Game over! Click 'Submit Score'.";
+        document.getElementById('guess').style.display = 'none';
+      }
+    }
+
+    // Save score to localStorage
+    function submitScore() {
+      const user = localStorage.getItem('loggedInUser');
+
+      if (!user) {
+        alert('🚫 You must be logged in to submit a score!');
+        return;
+      }
+
+      if (questionCount < maxQuestions) {
+        alert('⏳ Finish all words before submitting your score!');
+        return;
+      }
+
+      const scores = JSON.parse(localStorage.getItem('scores')) || [];
+      const existing = scores.find(s => s.name === user);
+
+      if (existing) {
+        existing.score = Math.max(existing.score, score);
+      } else {
+        scores.push({ name: user, score });
+      }
+
+      localStorage.setItem('scores', JSON.stringify(scores));
+      alert(`✅ Score submitted: ${score}`);
+    }
+
+    // Start the game
+    fetchWord();
+  </script>
+
+</body>
+</html>

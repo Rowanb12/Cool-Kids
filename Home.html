@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cool Kids</title>
+  <link rel="stylesheet" href="Cool.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+    <nav class="navigation">
+      <div class="logo">🌟 Cool Kids</div>
+      <ul>
+        <li><a href="Home.html">🏠 Home</a></li>
+        <li><a href="Games.html">🎮 Games</a></li>
+        <li><a href="Leaderboard.html">🏆 Leaderboard</a></li>
+        <li><a href="Account.html">👦 Account</a></li>
+        <li><a href="About Us.html">ℹ️ About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- h1 -->
+  <section class="banner h1">
+    <div class="banner h1">
+      <h1>🎮 Welcome to Cool Kids! 🎉</h1>
+      <p>Explore fun games, track your scores, and compete with friends!</p>
+      <a href="Games.html" class="start-button">Start Playing</a>
+    </div>
+  </section>
+
+  <!-- Login Form -->
+  <section class="login-section">
+    <h1>🔐 Login to Join the Fun!</h1>
+    <form class="login-form" onsubmit="login(event)">
+      <input type="text" placeholder="Full Name*" required />
+      <input type="email" id="email" placeholder="Email*" required />
+      <button type="submit">Login</button>
+      <button type="button" id="logoutBtn" onclick="logout()">Logout</button>
+    </form>
+  </section>
+
+  <!-- Background Video -->
+  <video class="background-video" autoplay muted loop>
+    <source src="puzzle.mp4.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+  Cool Kids. All rights reserved.
+  </footer>
+
+  <!-- JavaScript for login  -->
+  <script>
+    window.onload = function () {
+      const email = localStorage.getItem('loggedInUser');
+      if (email) {
+        document.getElementById('logoutBtn').style.display = 'block';
+      }
+    };
+
+    function login(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (email) {
+        localStorage.setItem('loggedInUser', email);
+        if (!localStorage.getItem('scores')) {
+          localStorage.setItem('scores', JSON.stringify([]));
+        }
+        alert('Logged in as ' + email);
+        window.location.href = "Games.html";
+      } else {
+        alert('Please enter a valid email!');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully!');
+      location.reload();
+    }
+  </script>
+
+</body>
+</html>

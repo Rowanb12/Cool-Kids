@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile - Cool Kids</title>
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="Cool.css" />
+
+  <!-- Embedded styles specific to the profile page -->
+  <style>
+    /* Logo style in header */
+    .logo {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #0d0d0d;
+    }
+
+    /* Main container for the profile section */
+    .profile-container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      margin: 60px auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Section heading */
+    h2 {
+      color: #007ea7;
+      margin-bottom: 20px;
+    }
+
+    /* User info block styling */
+    .info {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .info p {
+      margin: 15px 0;
+    }
+
+    /* Logout button styling */
+    #logoutBtn {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: #ff5858;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: none; /* Hidden until user is logged in */
+      transition: background 0.3s ease;
+    }
+
+    #logoutBtn:hover {
+      background-color: #e14b4b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navigation-->
+ <header>
+  <nav class="navigation">
+    <div class="logo">🌟 Cool Kids</div>
+    <ul>
+      <li><a href="Home.html">🏠 Home</a></li>
+      <li><a href="Games.html">🎮 Games</a></li>
+      <li><a href="Leaderboard.html">🏆 Leaderboard</a></li>
+      <li><a href="Account.html">👦 Account</a></li>
+      <li><a href="About Us.html">ℹ️ About</a></li>
+    </ul>
+  </nav>
+</header>
+
+  <!--Profile-->
+  <main>
+    <div class="banner">
+      <img src="apple.png" alt="Left Banner" />
+    <div class="profile-container">
+      <h2>Welcome to Your Profile</h2>
+      <div class="info">
+        <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+        <p><strong>Score:</strong> <span id="userScore">Loading...</span></p>
+      </div>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
+  </main>
+
+  <!-- JavaScript  -->
+  <script>
+    // Runs on page load
+    window.onload = function () {
+      const email = localStorage.getItem('loggedInUser'); // Get logged-in email
+      const scores = JSON.parse(localStorage.getItem('scores')) || []; // Get saved scores
+
+      if (email) {
+        // If user is logged in, display email and show logout button
+        document.getElementById('userEmail').textContent = email;
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+
+        // find score matching this email
+        const userScore = scores.find(s => s.name === email);
+        document.getElementById('userScore').textContent = userScore ? userScore.score : "No score yet";
+      } else {
+        // If not logged in, show default messages
+        document.getElementById('userEmail').textContent = "Not logged in";
+        document.getElementById('userScore').textContent = "-";
+      }
+    };
+
+    // Logout function clears login and redirects to home
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully!');
+      window.location.href = "Home.html"; // Redirect to homepage
+    }
+  </script>
+
+</body>
+</html>
